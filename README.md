@@ -1,7 +1,7 @@
 
 # Autonomous Coding Agent
 
-This python project provides an autonomous coding agent that can read and write files, execute Python code, install packages, and iteratively refine solutions to coding tasks using the Groq API and optional persistent vector memory via ChromaDB.
+This project provides an autonomous coding agent that can read and write files, execute Python code, install packages, and iteratively refine solutions to coding tasks using the Groq API and optional persistent vector memory via ChromaDB.
 
 ## Features
 
