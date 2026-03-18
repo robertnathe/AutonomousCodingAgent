@@ -64,8 +64,8 @@ If `chromadb` is not installed, memory support is disabled but the agent still r
    python autonomous_coding_agent.py
    ```
 
-By default, `main()` constructs a task asking the agent to create `pi_approx.py` that approximates \(\pi\) using the Leibniz series until the absolute error is below \(10^{-5}\), then prints the number of iterations required.
-The agent will interact with the filesystem and tools over several turns (up to `max_turns`, default 3) to complete this task.
+By default, `main()` constructs a task asking the agent to create `pi_approx.py` that approximates pi using the Leibniz series until the absolute error is below 10e-5, then prints the number of iterations required.
+The agent will interact with the filesystem and tools over several turns (up to `max_turns`, (default 3) to complete this task.
 
 ### Integrating into your own code
 
