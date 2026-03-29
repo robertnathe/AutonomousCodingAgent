@@ -85,7 +85,7 @@ print(result)
 
 The `task_description` should clearly describe what code to write or modify, desired behavior, and any constraints.
 
-## Agent Protocol
+Agent Protocol
 
 The agent is instructed via its system prompt to:
 
