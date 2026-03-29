@@ -1,9 +1,9 @@
 
-# Autonomous Coding Agent
+Autonomous Coding Agent
 
 This project provides an autonomous coding agent that can read and write files, execute Python code, install packages, and iteratively refine solutions to coding tasks using the Groq API and optional persistent vector memory via ChromaDB.
 
-## Features
+Features
 
 - Runs an LLM-powered coding loop using Groq’s `chat.completions` API with a configurable model (default: `llama-3.3-70b-versatile`).  
 - Persistent, versioned file backups for safe editing and undo (`.agent_backups`).
@@ -18,7 +18,7 @@ This project provides an autonomous coding agent that can read and write files, 
 - Simple in-memory cache to avoid redundant tool calls within a run.
 - Enforced agent output protocol using YAML-based ```actions``` blocks to describe tool calls and a final ```yaml``` outcome block declaring success or continuation.
 
-## Architecture
+Architecture
 
 The core components are:
 
@@ -33,7 +33,7 @@ The core components are:
   - Streams responses from Groq, parses ```actions``` YAML blocks, executes tools, and feeds observations back into the session context.
   - Manages multi-turn task execution, long-term memory retrieval/storage, and optional auto-verification by rerunning the last written Python file when the model declares success.
 
-## Requirements
+Requirements
 
 - Python 3.9+ (recommended).  
 - A valid Groq API key exported as `GROQ_API_KEY` in your environment; the agent will raise an error if it is missing.
@@ -50,7 +50,7 @@ pip install groq pyyaml chromadb
 
 If `chromadb` is not installed, memory support is disabled but the agent still runs.
 
-## Usage
+Usage
 
 1. Set your Groq API key:
 
@@ -67,7 +67,7 @@ If `chromadb` is not installed, memory support is disabled but the agent still r
 By default, `main()` constructs a task asking the agent to create `pi_approx.py` that approximates $\pi$ using the Leibniz series until the absolute error is below $10^{-5}$, then prints the number of iterations required.
 The agent will interact with the filesystem and tools over several turns (up to `max_turns`, default 3) to complete this task.
 
-### Integrating into your own code
+Integrating into your own code
 
 Instead of using the hard-coded task in `main()`, you can import and drive the agent programmatically:
 
@@ -112,13 +112,13 @@ The agent is instructed via its system prompt to:
 
 The runtime parses each ```actions``` block, calls the corresponding methods (`list_directory_files`, `read_file`, `write_file`, etc.), aggregates observations, and feeds them back to the model on subsequent turns.
 
-## Logging and Backups
+Logging and Backups
 
 - All stderr from Python file execution is appended to `execution_traceback.log` along with timestamps and return codes.
 - Each time a file is written, a versioned backup is stored in `.agent_backups` (e.g., `foo.py_v1.bak`, `foo.py_v2.bak`, ...).
 - You can revert a file to the latest backup using the `undo_last_change` tool.
 
-## Limitations and Notes
+Limitations and Notes
 
 - The agent currently focuses on Python projects and executes Python code only. 
 - The filesystem root for operations is the current working directory; common directories such as `.git`, `__pycache__`, and `node_modules` are ignored.
