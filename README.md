@@ -58,7 +58,9 @@ Requirements
 The program expects:
 
 Python 3.
-API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, or `GOOGLEAPIKEY`. Optional native build tools for C++ compilation, plus any system libraries needed by tasks such as `curl` or OpenSSL.
+API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, 
+or `GOOGLEAPIKEY`. Optional native build tools for C++ compilation, plus any system libraries needed by tasks 
+such as `curl` or OpenSSL.
 
 Usage
 
@@ -69,7 +71,8 @@ Run the program and choose one of the interactive options:
 3. Print memory stats.
 4. Quit.
 
-In single task mode, the program prompts for a task description, maximum turns, expected output files, and optional validation checks, then executes the agent workflow automatically.
+In single task mode, the program prompts for a task description, maximum turns, expected output files, and 
+optional validation checks, then executes the agent workflow automatically.
 
 Example workflow
 
