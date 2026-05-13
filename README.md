@@ -15,8 +15,6 @@ Semantic memory for reusing similar past solutions and learning from failures.
 Tool execution for file operations, shell commands, Python scripts, and C++ compilation.
 Automatic validation against required files and required output substrings.
 
-Features
-
 LLM backend management
 
 The agent supports multiple API-backed providers and falls back between them when one is unavailable or
