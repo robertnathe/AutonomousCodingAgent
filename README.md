@@ -1,6 +1,6 @@
 This project is an AI-powered coding agent that can plan, write, execute, debug, and validate code across Python 
-and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, 
-file backup/revert utilities, and a test suite for evaluating agent behavior.
+and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, file 
+backup/revert utilities, and a test suite for evaluating agent behavior.
 
 Overview
 
