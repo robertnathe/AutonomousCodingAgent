@@ -112,4 +112,5 @@ The main components are:
 
 Notes
 
-The agent is intentionally strict about validation. It expects exact output files, exact substrings in program output, and can stop early if a task fails validation.
+The agent is intentionally strict about validation. It expects exact output files, exact substrings in program 
+output, and can stop early if a task fails validation.
