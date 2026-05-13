@@ -44,12 +44,14 @@ runtime output.
 
 File safety and backups
 
-The file manager creates backups before overwriting files, can revert to previous versions, and automatically fixes 
-common include issues in C++ files.
+The file manager creates backups before overwriting files, can revert to previous versions, and automatically 
+fixes common include issues in C++ files.
 
 Test suite
 
-The included test suite contains a range of coding tasks such as concurrency, SQLite usage, numerical methods, file refactoring, data processing, and secure input validation. These are used to exercise different agent capabilities.
+The included test suite contains a range of coding tasks such as concurrency, SQLite usage, numerical methods, 
+file refactoring, data processing, and secure input validation. These are used to exercise different agent 
+capabilities.
 
 Requirements
 
