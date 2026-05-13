@@ -1,8 +1,11 @@
-This project is an AI-powered coding agent that can plan, write, execute, debug, and validate code across Python and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, file backup/revert utilities, and a test suite for evaluating agent behavior.
+This project is an AI-powered coding agent that can plan, write, execute, debug, and validate code across Python 
+and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, file backup/revert utilities, and a test suite for evaluating agent behavior.
 
 Overview
 
-The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions such as writing files or running scripts, and checks results against expected output files and validation rules. It is designed to automate end-to-end coding workflows rather than just generate code text.
+The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions such 
+as writing files or running scripts, and checks results against expected output files and validation rules. It is 
+designed to automate end-to-end coding workflows rather than just generate code text.
 
 Key capabilities include:
 
@@ -11,16 +14,18 @@ Semantic memory for reusing similar past solutions and learning from failures.
 Tool execution for file operations, shell commands, Python scripts, and C++ compilation.
 Automatic validation against required files and required output substrings.
 
-
 Features
 
 LLM backend management
 
-The agent supports multiple API-backed providers and falls back between them when one is unavailable or rate-limited. It also includes caching and cooldown logic to reduce repeated calls.
+The agent supports multiple API-backed providers and falls back between them when one is unavailable or rate-limited. 
+It also includes caching and cooldown logic to reduce repeated calls.
 
 Semantic memory
 
-The memory system stores successful solutions and failure patterns, using TF-IDF-style text matching and hybrid similarity scoring to retrieve relevant prior tasks. This helps the agent reuse working plans and learn from recurring errors.
+The memory system stores successful solutions and failure patterns, using TF-IDF-style text matching and hybrid 
+similarity scoring to retrieve relevant prior tasks. This helps the agent reuse working plans and learn from 
+recurring errors.
 
 Tool execution
 
@@ -33,11 +38,13 @@ compile and run C++ files,
 run shell commands,
 install packages.
 
-It also validates file syntax before writing and can auto-execute generated scripts when validation requires runtime output.
+It also validates file syntax before writing and can auto-execute generated scripts when validation requires 
+runtime output.
 
 File safety and backups
 
-The file manager creates backups before overwriting files, can revert to previous versions, and automatically fixes common include issues in C++ files.
+The file manager creates backups before overwriting files, can revert to previous versions, and automatically fixes 
+common include issues in C++ files.
 
 Test suite
 
@@ -48,9 +55,7 @@ Requirements
 The program expects:
 
 Python 3.
-API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, or `GOOGLEAPIKEY`.
-Optional native build tools for C++ compilation, plus any system libraries needed by tasks such as `curl` or OpenSSL.
-
+API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, or `GOOGLEAPIKEY`. Optional native build tools for C++ compilation, plus any system libraries needed by tasks such as `curl` or OpenSSL.
 
 Usage
 
@@ -98,7 +103,6 @@ The main components are:
 `ToolExecutor`: validates and dispatches tool actions.
 `CodingAgent`: the main task execution loop.
 `TestSuite`: predefined tasks for evaluation.
-
 
 Notes
 
