@@ -4,9 +4,9 @@ backup/revert utilities, and a test suite for evaluating agent behavior.
 
 Overview
 
-The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions such 
-as writing files or running scripts, and checks results against expected output files and validation rules. It is 
-designed to automate end-to-end coding workflows rather than just generate code text.
+The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions 
+such as writing files or running scripts, and checks results against expected output files and validation rules. 
+It is designed to automate end-to-end coding workflows rather than just generate code text.
 
 Key capabilities include:
 
