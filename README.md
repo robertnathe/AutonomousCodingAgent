@@ -19,7 +19,7 @@ Features
 
 LLM backend management
 
-The agent supports multiple API-backed providers and falls back between them when one is unavailable or 
+The agent supports multiple API-backed providers and falls back between them when one is unavailable or
 rate-limited. It also includes caching and cooldown logic to reduce repeated calls.
 
 Semantic memory
