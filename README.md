@@ -1,126 +1,105 @@
+This project is an AI-powered coding agent that can plan, write, execute, debug, and validate code across Python and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, file backup/revert utilities, and a test suite for evaluating agent behavior.
 
-Autonomous Coding Agent
+Overview
 
-This project provides an autonomous coding agent that can read and write files, execute Python code, install packages, and iteratively refine solutions to coding tasks using the Groq API and optional persistent vector memory via ChromaDB.
+The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions such as writing files or running scripts, and checks results against expected output files and validation rules. It is designed to automate end-to-end coding workflows rather than just generate code text.
+
+Key capabilities include:
+
+Multi-backend LLM orchestration with Groq, OpenRouter, and Google Gemini support.
+Semantic memory for reusing similar past solutions and learning from failures.
+Tool execution for file operations, shell commands, Python scripts, and C++ compilation.
+Automatic validation against required files and required output substrings.
+
 
 Features
 
-- Runs an LLM-powered coding loop using Groq’s `chat.completions` API with a configurable model (default: `llama-3.3-70b-versatile`).  
-- Persistent, versioned file backups for safe editing and undo (`.agent_backups`).
-- Optional long-term memory using ChromaDB (`agent_memory_db`), storing task/result snippets for future retrieval. 
-- Tooling layer for:
-  - Listing files in the current project tree (with common directories ignored).  
-  - Reading and writing files with automatic directory creation.
-  - Executing Python files and inline Python code with timeouts and stderr logging (`execution_traceback.log`).
-  - Installing Python packages via `pip` with timeouts.
-  - Grep-based search across the repository with ignore rules. 
-  - Inspecting the Python environment (`pip list`, `python -m site`).
-- Simple in-memory cache to avoid redundant tool calls within a run.
-- Enforced agent output protocol using YAML-based ```actions``` blocks to describe tool calls and a final ```yaml``` outcome block declaring success or continuation.
+LLM backend management
 
-Architecture
+The agent supports multiple API-backed providers and falls back between them when one is unavailable or rate-limited. It also includes caching and cooldown logic to reduce repeated calls.
 
-The core components are:
+Semantic memory
 
-- `AgentConfig`: Dataclass holding model ID, backup directory, memory DB path, collection name, and timeout settings for execution and installs.
-- `MemoryManager`: Wraps ChromaDB (if installed) to store and retrieve prior tasks and results; gracefully degrades if Chroma is unavailable.
-- `FileManager`: Handles file backup, read/write, and undo of the last change via versioned `.bak` files in `.agent_backups`.
-- `CodeExecutor`: Runs Python files or inline code in subprocesses with timeouts, capturing output and writing stderr to `execution_traceback.log`. 
-- `ToolCache`: Simple dictionary-based cache keyed by a hash of tool name and arguments.  
-- `CodingAgent`: High-level agent that:
-  - Exposes tools (list/read/write files, execute code, install packages, search, etc.).  
-  - Constructs a system prompt describing the available tools and strict output format. 
-  - Streams responses from Groq, parses ```actions``` YAML blocks, executes tools, and feeds observations back into the session context.
-  - Manages multi-turn task execution, long-term memory retrieval/storage, and optional auto-verification by rerunning the last written Python file when the model declares success.
+The memory system stores successful solutions and failure patterns, using TF-IDF-style text matching and hybrid similarity scoring to retrieve relevant prior tasks. This helps the agent reuse working plans and learn from recurring errors.
+
+Tool execution
+
+The tool executor can:
+
+write and read files,
+create directories,
+execute Python scripts,
+compile and run C++ files,
+run shell commands,
+install packages.
+
+It also validates file syntax before writing and can auto-execute generated scripts when validation requires runtime output.
+
+File safety and backups
+
+The file manager creates backups before overwriting files, can revert to previous versions, and automatically fixes common include issues in C++ files.
+
+Test suite
+
+The included test suite contains a range of coding tasks such as concurrency, SQLite usage, numerical methods, file refactoring, data processing, and secure input validation. These are used to exercise different agent capabilities.
 
 Requirements
 
-- Python 3.9+ (recommended).  
-- A valid Groq API key exported as `GROQ_API_KEY` in your environment; the agent will raise an error if it is missing.
-- Python packages:
-  - `groq`  
-  - `pyyaml` (`yaml`)  
-  - Optional: `chromadb` (for persistent vector memory)  
+The program expects:
 
-You can install the core dependencies with:
+Python 3.
+API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, or `GOOGLEAPIKEY`.
+Optional native build tools for C++ compilation, plus any system libraries needed by tasks such as `curl` or OpenSSL.
 
-```bash
-pip install groq pyyaml chromadb
-```
-
-If `chromadb` is not installed, memory support is disabled but the agent still runs.
 
 Usage
 
-1. Set your Groq API key:
+Run the program and choose one of the interactive options:
 
-   ```bash
-   export GROQ_API_KEY="your_api_key_here"
-   ```
+1. Single task mode.
+2. Run test suite.
+3. Print memory stats.
+4. Quit.
 
-2. Run the agent script:
+In single task mode, the program prompts for a task description, maximum turns, expected output files, and optional validation checks, then executes the agent workflow automatically.
 
-   ```bash
-   python autonomous_coding_agent.py
-   ```
+Example workflow
 
-By default, `main()` constructs a task asking the agent to create `pi_approx.py` that approximates $\pi$ using the Leibniz series until the absolute error is below $10^{-5}$, then prints the number of iterations required.
-The agent will interact with the filesystem and tools over several turns (up to `max_turns`, default 3) to complete this task.
+A typical run is:
 
-Integrating into your own code
+1. Enter a task description.
+2. Specify output files such as `app.py` or `output.json`.
+3. Add validation requirements if needed.
+4. Let the agent plan, write, execute, and verify the solution.
 
-Instead of using the hard-coded task in `main()`, you can import and drive the agent programmatically:
+Configuration
 
-```python
-from autonomous_coding_agent import CodingAgent, AgentConfig
+Configuration is handled through the `AgentConfig` dataclass. Important settings include:
 
-config = AgentConfig(
-    model_id="llama-3.3-70b-versatile",
-    backup_dir=".agent_backups",
-)
-agent = CodingAgent(config=config)
-result = agent.run("Your coding task description here", max_turns=5)
-print(result)
-```
+execution and code timeouts,
+memory database path,
+backup directory,
+similarity threshold,
+maximum memory entries,
+backend priority order,
+global rate limits.
 
-The `task_description` should clearly describe what code to write or modify, desired behavior, and any constraints.
+Defaults are loaded from environment-based configuration, so the agent can be adapted without code changes.
 
-Agent Protocol
+Project structure
 
-The agent is instructed via its system prompt to:
+The main components are:
 
-- Think step-by-step in plain text.  
-- Emit one or more ```actions``` blocks where each block is a YAML list of tool calls, for example:
+`AgentConfig`: runtime configuration.
+`LLMBackendManager`: backend selection and API routing.
+`SemanticMemoryManager`: solution and failure memory.
+`FileManager`: safe file writing and backups.
+`CodeExecutor`: runs Python/C++ code and shell commands.
+`ToolExecutor`: validates and dispatches tool actions.
+`CodingAgent`: the main task execution loop.
+`TestSuite`: predefined tasks for evaluation.
 
-  ```text
-  ```actions
-  - tool: write_file
-    args:
-      file_path: demo.py
-      content: |
-        print(42)
-  ```
-  ```
 
-- End with exactly one ```yaml``` block declaring the outcome:
+Notes
 
-  ```text
-  ```yaml
-  outcome: success
-  ```
-  ```
-
-The runtime parses each ```actions``` block, calls the corresponding methods (`list_directory_files`, `read_file`, `write_file`, etc.), aggregates observations, and feeds them back to the model on subsequent turns.
-
-Logging and Backups
-
-- All stderr from Python file execution is appended to `execution_traceback.log` along with timestamps and return codes.
-- Each time a file is written, a versioned backup is stored in `.agent_backups` (e.g., `foo.py_v1.bak`, `foo.py_v2.bak`, ...).
-- You can revert a file to the latest backup using the `undo_last_change` tool.
-
-Limitations and Notes
-
-- The agent currently focuses on Python projects and executes Python code only. 
-- The filesystem root for operations is the current working directory; common directories such as `.git`, `__pycache__`, and `node_modules` are ignored.
-- Long-running or hanging programs are bounded by configurable timeouts for both code execution and package installation.
-```
+The agent is intentionally strict about validation. It expects exact output files, exact substrings in program output, and can stop early if a task fails validation.
