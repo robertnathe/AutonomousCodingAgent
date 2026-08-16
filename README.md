@@ -1,114 +1,148 @@
-This project is an AI-powered coding agent that can plan, write, execute, debug, and validate code across Python 
-and C/C++ tasks. It includes multi-backend LLM support, semantic memory for reusable solutions, file 
-backup/revert utilities, and a test suite for evaluating agent behavior.
+# Advanced Coding Agent
 
-Overview
+An autonomous AI coding agent that plans, writes, executes, debugs, and iterates on Python and C++ programs using large language models. It combines multi-backend LLM routing, semantic memory of past solutions, failure-pattern learning, task decomposition, and a rich tool-using loop to solve programming tasks with minimal human intervention.
 
-The program is centered around a `CodingAgent` that takes a task prompt, creates a plan, executes tool actions 
-such as writing files or running scripts, and checks results against expected output files and validation rules. 
-It is designed to automate end-to-end coding workflows rather than just generate code text.
+## Features
 
-Key capabilities include:
+- Multi-provider LLM support – Groq, OpenRouter, and Google Gemini with automatic fallback and rate limiting
+- Semantic memory – TF-IDF + hybrid cosine/Jaccard retrieval of previous successful solutions and plans; learns from outcomes
+- Failure memory – Stores error signatures and hints so the agent can avoid repeating the same mistakes
+- Code execution sandbox – Runs Python and C++ (with auto-compilation, dependency detection, and limited auto-install)
+- Planning & decomposition – Breaks complex tasks into sub-goals and generates executable action plans
+- Tool-using agent loop – `write_file`, `execute_file`, `read_file`, shell commands, validation, and `finish`
+- Reflection – Analyzes failures and suggests capability improvements
+- Built-in test suite – 25 diverse coding challenges covering concurrency, algorithms, multi-language bridges, security, parsing, etc.
+- Safety-oriented runner – Optional Docker sandbox script that limits CPU/memory and runs as a non-root user
 
-Multi-backend LLM orchestration with Groq, OpenRouter, and Google Gemini support.
-Semantic memory for reusing similar past solutions and learning from failures.
-Tool execution for file operations, shell commands, Python scripts, and C++ compilation.
-Automatic validation against required files and required output substrings.
+## Requirements
 
-LLM backend management
+- Python 3.10+
+- `requests`
+- Optional: `g++` (for C++ compilation), Docker (for the sandboxed runner)
 
-The agent supports multiple API-backed providers and falls back between them when one is unavailable or
-rate-limited. It also includes caching and cooldown logic to reduce repeated calls.
+API keys (at least one required):
 
-Semantic memory
+```bash
+export GROQ_API_KEY="gsk_..."
+export OPENROUTER_API_KEY="sk-or-..."
+export GOOGLE_API_KEY="AIza..."
+```
 
-The memory system stores successful solutions and failure patterns, using TF-IDF-style text matching and hybrid 
-similarity scoring to retrieve relevant prior tasks. This helps the agent reuse working plans and learn from 
-recurring errors.
+Install minimal dependencies:
 
-Tool execution
+```bash
+pip install requests
+```
 
-The tool executor can:
+## Quick Start
 
-write and read files,
-create directories,
-execute Python scripts,
-compile and run C++ files,
-run shell commands,
-install packages.
+```bash
+# Clone / copy the repository
+cd path/to/agent
 
-It also validates file syntax before writing and can auto-execute generated scripts when validation requires 
-runtime output.
+# Make sure at least one API key is set
+export GROQ_API_KEY="your-key"
 
-File safety and backups
+# Run interactively
+python AdvancedCodingAgent.py
+```
 
-The file manager creates backups before overwriting files, can revert to previous versions, and automatically 
-fixes common include issues in C++ files.
+You will see a simple menu:
 
-Test suite
+```
+1. Single task
+2. Run tests
+3. Stats
+4. Quit
+```
 
-The included test suite contains a range of coding tasks such as concurrency, SQLite usage, numerical methods, 
-file refactoring, data processing, and secure input validation. These are used to exercise different agent 
-capabilities.
+### Single task
 
-Requirements
+Enter a natural-language task description, optional expected output files, and optional validation checks. The agent will plan, write code, execute it, and iterate until success or the turn limit is reached.
 
-The program expects:
+### Running the test suite
 
-Python 3.
-API keys for at least one supported backend in environment variables such as `GROQAPIKEY`, `OPENROUTERAPIKEY`, 
-or `GOOGLEAPIKEY`. Optional native build tools for C++ compilation, plus any system libraries needed by tasks 
-such as `curl` or OpenSSL.
+Choose option 2 and enter test IDs (e.g. `T1,T5,T16`) or `all`. Each test has a timeout and validation criteria (file existence + expected stdout substrings).
 
-Usage
+### Sandboxed execution (recommended)
 
-Run the program and choose one of the interactive options:
+```bash
+chmod +x run-agent-safely.sh
+./run-agent-safely.sh
+```
 
-1. Single task mode.
-2. Run test suite.
-3. Print memory stats.
-4. Quit.
+This builds a minimal Docker image, mounts the current directory, drops privileges to UID 1000, and limits the container to 2 CPUs / 3 GB RAM.
 
-In single task mode, the program prompts for a task description, maximum turns, expected output files, and 
-optional validation checks, then executes the agent workflow automatically.
+## Configuration
 
-Example workflow
+Most settings live in the `AgentConfig` dataclass near the top of `AdvancedCodingAgent.py`:
 
-A typical run is:
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `models` | llama-3.3-70b / gemini-… | Model IDs per backend |
+| `backend_priority` | `["groq", "openrouter", "google"]` | Fallback order |
+| `global_rpm` | 30 | Global rate-limit target |
+| `max_actions_per_turn` | 6 | Safety limit on tool calls |
+| `max_execution_timeout` | 30 s | Per-process timeout |
+| `max_memory_entries` | 50 | Semantic memory capacity |
+| `semantic_similarity_threshold` | 0.72 | Retrieval threshold |
+| `evolution.enabled` | `True` | Enable reflection & learning |
 
-1. Enter a task description.
-2. Specify output files such as `app.py` or `output.json`.
-3. Add validation requirements if needed.
-4. Let the agent plan, write, execute, and verify the solution.
+Memory is persisted under `./agent_memory_db/` (JSON files).
 
-Configuration
+## Architecture Overview
 
-Configuration is handled through the `AgentConfig` dataclass. Important settings include:
+```
+CodingAgent
+├── LLMClient (Groq / OpenRouter / Google) + cache + rate limiter
+├── SemanticMemoryManager
+│   ├── Exact + inverted-index retrieval
+│   ├── Hybrid cosine / Jaccard scoring with outcome feedback
+│   └── FailurePattern store
+├── CodeExecutor
+│   ├── Python (with ModuleNotFoundError → pip install retry)
+│   └── C++ (g++ -std=c++17, auto -pthread / -lcurl / etc.)
+├── Planner / Decomposer / Reflection modules
+└── ToolExecutor (write_file, execute_file, finish, …)
+```
 
-execution and code timeouts,
-memory database path,
-backup directory,
-similarity threshold,
-maximum memory entries,
-backend priority order,
-global rate limits.
+The main loop:
 
-Defaults are loaded from environment-based configuration, so the agent can be adapted without code changes.
+1. Try to replay a high-scoring cached plan.
+2. Otherwise generate a fresh plan and execute it.
+3. Enter the reactive turn loop: LLM → extract actions → execute → observe → reflect.
+4. On success, store the solution (and optionally the plan) in semantic memory.
+5. On failure, store the error signature and any useful hints.
 
-Project structure
+## Test Suite Highlights
 
-The main components are:
+| ID | Focus |
+|----|-------|
+| T1  | Debugging a segfault from logs |
+| T2  | Concurrent SHA-256 hashing |
+| T3  | C++ → JSON → Python multi-language bridge |
+| T5  | Secure SQLite (parameterized queries + injection demo) |
+| T16 | LRU cache with TTL |
+| T18 | Mini regex engine (no `re` module) |
+| T20 | JSON parser from scratch |
+| T24 | Sudoku solver with constraint propagation |
+| T25 | Custom async event loop |
 
-`AgentConfig`: runtime configuration.
-`LLMBackendManager`: backend selection and API routing.
-`SemanticMemoryManager`: solution and failure memory.
-`FileManager`: safe file writing and backups.
-`CodeExecutor`: runs Python/C++ code and shell commands.
-`ToolExecutor`: validates and dispatches tool actions.
-`CodingAgent`: the main task execution loop.
-`TestSuite`: predefined tasks for evaluation.
+See the `TestSuite` class for the full list and exact validation criteria.
 
-Notes
+## License
 
-The agent is intentionally strict about validation. It expects exact output files, exact substrings in
-program output, and can stop early if a task fails validation.
+This project is licensed under the GNU Affero General Public License v3.0.  
+See the [LICENSE](LICENSE) file for the full text.
+
+Because of the AGPL, if you run a modified version of this agent as a network service, you must make the corresponding source available to users of that service.
+
+## Safety Notes
+
+- The agent can execute arbitrary code that it generates. Always run it inside the provided Docker sandbox (or an equivalent isolated environment) when experimenting with untrusted tasks.
+- Auto-install of Python packages is enabled by default but limited to a small retry budget.
+- Network access, file system, and process limits should be constrained in production deployments.
+
+## Contributing
+
+Bug reports, additional test cases, and improvements to the planning / memory / reflection modules are welcome. Please keep the AGPL-3.0 license notice intact.
