@@ -154,4 +154,5 @@ corresponding source available to users of that service.
 
 ## Contributing
 
-Bug reports, additional test cases, and improvements to the planning / memory / reflection modules are welcome. Please keep the AGPL-3.0 license notice intact.
+Bug reports, additional test cases, and improvements to the planning / memory / reflection modules are welcome. 
+Please keep the AGPL-3.0 license notice intact.
