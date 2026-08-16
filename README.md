@@ -14,7 +14,8 @@ learning, task decomposition, and a rich tool-using loop to solve programming ta
 - Planning & decomposition – Breaks complex tasks into sub-goals and generates executable action plans
 - Tool-using agent loop – `write_file`, `execute_file`, `read_file`, shell commands, validation, and `finish`
 - Reflection – Analyzes failures and suggests capability improvements
-- Built-in test suite – 25 diverse coding challenges covering concurrency, algorithms, multi-language bridges, security, parsing, etc.
+- Built-in test suite – 25 diverse coding challenges covering concurrency, algorithms, multi-language bridges,
+- security, parsing, etc.
 - Safety-oriented runner – Optional Docker sandbox script that limits CPU/memory and runs as a non-root user
 
 ## Requirements
@@ -61,11 +62,13 @@ You will see a simple menu:
 
 ### Single task
 
-Enter a natural-language task description, optional expected output files, and optional validation checks. The agent will plan, write code, execute it, and iterate until success or the turn limit is reached.
+Enter a natural-language task description, optional expected output files, and optional validation checks. 
+The agent will plan, write code, execute it, and iterate until success or the turn limit is reached.
 
 ### Running the test suite
 
-Choose option 2 and enter test IDs (e.g. `T1,T5,T16`) or `all`. Each test has a timeout and validation criteria (file existence + expected stdout substrings).
+Choose option 2 and enter test IDs (e.g. `T1,T5,T16`) or `all`. Each test has a timeout and validation criteria 
+(file existence + expected stdout substrings).
 
 ### Sandboxed execution (recommended)
 
@@ -74,7 +77,8 @@ chmod +x run-agent-safely.sh
 ./run-agent-safely.sh
 ```
 
-This builds a minimal Docker image, mounts the current directory, drops privileges to UID 1000, and limits the container to 2 CPUs / 3 GB RAM.
+This builds a minimal Docker image, mounts the current directory, drops privileges to UID 1000, and 
+limits the container to 2 CPUs / 3 GB RAM.
 
 ## Configuration
 
@@ -138,11 +142,13 @@ See the `TestSuite` class for the full list and exact validation criteria.
 This project is licensed under the GNU Affero General Public License v3.0.  
 See the [LICENSE](LICENSE) file for the full text.
 
-Because of the AGPL, if you run a modified version of this agent as a network service, you must make the corresponding source available to users of that service.
+Because of the AGPL, if you run a modified version of this agent as a network service, you must make the 
+corresponding source available to users of that service.
 
 ## Safety Notes
 
-- The agent can execute arbitrary code that it generates. Always run it inside the provided Docker sandbox (or an equivalent isolated environment) when experimenting with untrusted tasks.
+- The agent can execute arbitrary code that it generates. Always run it inside the provided Docker sandbox
+- (or an equivalent isolated environment) when experimenting with untrusted tasks.
 - Auto-install of Python packages is enabled by default but limited to a small retry budget.
 - Network access, file system, and process limits should be constrained in production deployments.
 
