@@ -1,10 +1,10 @@
-# Advanced Coding Agent
+Advanced Coding Agent
 
 An autonomous AI coding agent that plans, writes, executes, debugs, and iterates on Python and C++ programs using 
 large language models. It combines multi-backend LLM routing, semantic memory of past solutions, failure-pattern 
 learning, task decomposition, and a rich tool-using loop to solve programming tasks with minimal human intervention.
 
-## Features
+Features
 
 - Multi-provider LLM support – Groq, OpenRouter, and Google Gemini with automatic fallback and rate limiting
 - Semantic memory – TF-IDF + hybrid cosine/Jaccard retrieval of previous successful solutions and plans;
@@ -18,7 +18,7 @@ learning, task decomposition, and a rich tool-using loop to solve programming ta
 - security, parsing, etc.
 - Safety-oriented runner – Optional Docker sandbox script that limits CPU/memory and runs as a non-root user
 
-## Requirements
+Requirements
 
 - Python 3.10+
 - `requests`
@@ -38,7 +38,7 @@ Install minimal dependencies:
 pip install requests
 ```
 
-## Quick Start
+Quick Start
 
 ```bash
 # Clone / copy the repository
@@ -60,17 +60,17 @@ You will see a simple menu:
 4. Quit
 ```
 
-### Single task
+Single task
 
 Enter a natural-language task description, optional expected output files, and optional validation checks. 
 The agent will plan, write code, execute it, and iterate until success or the turn limit is reached.
 
-### Running the test suite
+Running the test suite
 
 Choose option 2 and enter test IDs (e.g. `T1,T5,T16`) or `all`. Each test has a timeout and validation criteria 
 (file existence + expected stdout substrings).
 
-### Sandboxed execution (recommended)
+Sandboxed execution (recommended)
 
 ```bash
 chmod +x run-agent-safely.sh
@@ -80,7 +80,7 @@ chmod +x run-agent-safely.sh
 This builds a minimal Docker image, mounts the current directory, drops privileges to UID 1000, and 
 limits the container to 2 CPUs / 3 GB RAM.
 
-## Configuration
+Configuration
 
 Most settings live in the `AgentConfig` dataclass near the top of `AdvancedCodingAgent.py`:
 
@@ -97,7 +97,7 @@ Most settings live in the `AgentConfig` dataclass near the top of `AdvancedCodin
 
 Memory is persisted under `./agent_memory_db/` (JSON files).
 
-## Architecture Overview
+Architecture Overview
 
 ```
 CodingAgent
@@ -121,7 +121,7 @@ The main loop:
 4. On success, store the solution (and optionally the plan) in semantic memory.
 5. On failure, store the error signature and any useful hints.
 
-## Test Suite Highlights
+Test Suite Highlights
 
 | ID | Focus |
 |----|-------|
@@ -137,7 +137,7 @@ The main loop:
 
 See the `TestSuite` class for the full list and exact validation criteria.
 
-## License
+License
 
 This project is licensed under the GNU Affero General Public License v3.0.  
 See the [LICENSE](LICENSE) file for the full text.
@@ -145,14 +145,14 @@ See the [LICENSE](LICENSE) file for the full text.
 Because of the AGPL, if you run a modified version of this agent as a network service, you must make the 
 corresponding source available to users of that service.
 
-## Safety Notes
+Safety Notes
 
 - The agent can execute arbitrary code that it generates. Always run it inside the provided Docker sandbox
 - (or an equivalent isolated environment) when experimenting with untrusted tasks.
 - Auto-install of Python packages is enabled by default but limited to a small retry budget.
 - Network access, file system, and process limits should be constrained in production deployments.
 
-## Contributing
+Contributing
 
 Bug reports, additional test cases, and improvements to the planning / memory / reflection modules are welcome. 
 Please keep the AGPL-3.0 license notice intact.
