@@ -1,6 +1,6 @@
 Advanced Coding Agent
 
-An autonomous AI coding agent that plans, writes, executes, debugs, and iterates on Python and C++ programs using 
+An autonomous AI coding agent that plans, writes, executes, debugs, and iterates on Python programs using 
 large language models. It combines multi-backend LLM routing, semantic memory of past solutions, failure-pattern 
 learning, task decomposition, and a rich tool-using loop to solve programming tasks with minimal human intervention.
 
@@ -10,7 +10,7 @@ Features
 - Semantic memory – TF-IDF + hybrid cosine/Jaccard retrieval of previous successful solutions and plans;
 - learns from outcomes
 - Failure memory – Stores error signatures and hints so the agent can avoid repeating the same mistakes
-- Code execution sandbox – Runs Python and C++ (with auto-compilation, dependency detection, and limited auto-install)
+- Code execution sandbox – Runs Python (with auto-compilation, dependency detection, and limited auto-install)
 - Planning & decomposition – Breaks complex tasks into sub-goals and generates executable action plans
 - Tool-using agent loop – `write_file`, `execute_file`, `read_file`, shell commands, validation, and `finish`
 - Reflection – Analyzes failures and suggests capability improvements
