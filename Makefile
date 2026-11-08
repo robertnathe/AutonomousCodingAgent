@@ -1,12 +1,14 @@
 CXX      = g++
-CXXFLAGS = -std=c++20 -Wall -O2 -I/usr/include -I/usr/local/include
-LDFLAGS  = -lcurl -lyaml-cpp -lcrypto
+CXXFLAGS = -std=c++20 -Wall -O2 -I/usr/include -I/usr/local/include -I/usr/include/nlohmann
 
-TARGET   = output
-SOURCES  = Advanced_Coding_Agent.cpp
+LDFLAGS  = -lcurl -lyaml-cpp -lcrypto -pthread
+
+TARGET   = AdvancedCodingAgent
+
+SOURCES  = AdvancedCodingAgent.cpp
 OBJECTS  = $(SOURCES:.cpp=.o)
 
-.PHONY: all clean
+.PHONY: all clean run
 
 all: $(TARGET)
 
